@@ -36,7 +36,5 @@ exports.start = function(){
 	console.log("server start 127.0.0.1:8000");
 }
 
-exports.stop = function(){
-	server.close();
-}
+
 
