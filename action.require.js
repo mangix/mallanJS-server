@@ -1,6 +1,6 @@
 var actionManager = require("./actionManager").actionManager,
 moduleManager = require('./moduleManager').moduleManager,
-arrayExtend = require('./arrayExtend');
+arrayExtend = require('./arrayExtend').array;
 
 actionManager.register('require',function(request,response){
 	var path = require("path"),
@@ -14,7 +14,7 @@ actionManager.register('require',function(request,response){
 		});
 	}
 	
-	var basepath = require('./config').config.basePath,
+	var basePath = require('./config').config.basePath,
 	_request = query['request']? query['request'].replace('Mallan.',''):'',
 	_loaded = query['loaded']? query['loaded'].split(',') : [];
 	_request = _request.split(',');
@@ -22,26 +22,26 @@ actionManager.register('require',function(request,response){
 	//get the related modules
 	var result = [],modules = moduleManager.getModules();
 	for(var i=0, l=_request.length;i<l;i++){
-		var rely = modules[_request[i]] || {};
-		result = result.concat(rely || []);
+		var module = modules[_request[i]] || {};
+		result = result.concat(module.rely || []);
 	}
-	
+	console.log(result)
 	response.writeHead(200,{
 		"Content-Type":"text/plain"
 	});
 	
+	//response the related module
 	for(var i=0,l=result.length;i<l;i++){
 		if(!arrayExtend.contain(_loaded,_request[i])){
 			//TODO make it acsync
-			var realPath = basePath + _request[i].replace(/\./g,'/')+".js";
-			fs.readFileSync(realPath,"binary",function(err,data){
-				if(err){
-					console.log(err);
-					return ;
-				}
-				response.write(data,'binary');
-			});
+			var realPath = basePath + result[i].replace(/\./g,'/')+".js";
+			var content = fs.readFileSync(realPath,"binary");
+			response.write(content,'binary');
 		}
 	}
+	
+	//response itself
+	response.write(fs.readFileSync(realPath,"binary"),'binary');
+	
 	response.end();
 });
