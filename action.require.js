@@ -15,7 +15,7 @@ actionManager.register('require', function(request, response) {
     }
 
     var basePath = require('./config').config.basePath, 
-    _request = query['request'] ? query['request'].replace('Mallan.', '') : '';
+    _request = query['request'] ? decodeURIComponent(query['request']).replace('Mallan.', '') : '';
     _request = _request.split(',');
 
     response.writeHead(200, {

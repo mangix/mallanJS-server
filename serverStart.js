@@ -4,4 +4,4 @@ server.start();
 mm.updateDependency();
 setTimeout(function(){
 	console.log(mm.getModules())
-},5000);
+},3000);
