@@ -5,6 +5,7 @@ exports.start = function() {
     var actionConfig = require("./actionConfig").actionConfig;
     var actionManager = require("./actionManager").actionManager;
     var url = require("url");
+    var os = require("os");
     //load all actionModule
     for ( var o in actionConfig) {
         require(actionConfig[o]);
@@ -31,8 +32,9 @@ exports.start = function() {
         response.end();
 
     };
+    var address = os.networkInterfaces().eth0[0].address
     server = http.createServer();
     server.on('request', onRequest);
-    server.listen(8000, '127.0.0.1');
-    console.log("server start 127.0.0.1:8000");
+    server.listen(8000, address);
+    console.log("server start "+address);
 }
