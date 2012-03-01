@@ -1,24 +1,25 @@
 var server;
 
-exports.start = function() {
+exports.start = function () {
     var http = require("http");
     var actionConfig = require("./actionConfig").actionConfig;
     var actionManager = require("./actionManager").actionManager;
     var url = require("url");
     var os = require("os");
     //load all actionModule
-    for ( var o in actionConfig) {
+    for (var o in actionConfig) {
         require(actionConfig[o]);
     }
 
-    var onRequest = function(request, response) {
+    var onRequest = function (request, response) {
+        console.log('Request comes')
         var actions = actionManager.getActions();
         var path = url.parse(request.url).pathname;
-        console.log(path)
+        console.log('Request:' + path);
         path = path.split('/');
         path = path[1];
         if (path) {
-            for ( var o in actions) {
+            for (var o in actions) {
                 if (o == path) {
                     actions[o].call(this, request, response);
                     return;
@@ -26,15 +27,15 @@ exports.start = function() {
             }
         }
         response.writeHead(200, {
-            "Content-Type" : "text/plain"
+            "Content-Type":"text/plain"
         });
         response.write("not found");
         response.end();
 
     };
-    var address = os.networkInterfaces().eth0[0].address
+    var address = os.networkInterfaces().eth0[0].address;
     server = http.createServer();
     server.on('request', onRequest);
     server.listen(8000, address);
-    console.log("server start "+address);
+    console.log("server start " + address);
 }
